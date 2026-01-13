@@ -7,11 +7,9 @@ export default function ImageUpload() {
   const handleChange = (e) => {
     const selectedFile = e.target.files[0];
     if (!selectedFile) return;
-    
     if (preview) {
       URL.revokeObjectURL(preview);
     }
-
     setFile(selectedFile);
     setPreview(URL.createObjectURL(selectedFile));
   };
