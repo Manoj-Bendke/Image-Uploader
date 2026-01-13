@@ -15,7 +15,7 @@ app.use(express.static("public"));
 
 // multer config
 const storage = multer.diskStorage({
-  destination: "uploads/",
+  destination: "/backend/uploads",
   filename: (req, file, cb) => {
     cb(null, Date.now() + "-" + file.originalname);
   }
@@ -28,7 +28,7 @@ const upload = multer({
     if (!file.mimetype.startsWith("image/")) {
       cb(new Error("Only images allowed"));
     }
-    cb(null, true);
+    rcb(null, true);
   }
 });
 
