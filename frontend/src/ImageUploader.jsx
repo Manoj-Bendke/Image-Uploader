@@ -7,6 +7,10 @@ export default function ImageUpload() {
   const handleChange = (e) => {
     const selectedFile = e.target.files[0];
     if (!selectedFile) return;
+    
+    if (preview) {
+      URL.revokeObjectURL(preview);
+    }
 
     setFile(selectedFile);
     setPreview(URL.createObjectURL(selectedFile));
@@ -21,7 +25,7 @@ export default function ImageUpload() {
 
     const res = await fetch("/upload", {
       method: "POST",
-      body: formData
+      body: formData,
     });
 
     const data = await res.json();
@@ -33,16 +37,17 @@ export default function ImageUpload() {
       <h2>Upload Image</h2>
 
       <form onSubmit={handleSubmit}>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleChange}
-          required
-        />
+        <input type="file" accept="image/*" onChange={handleChange} required />
         <button type="submit">Upload</button>
       </form>
 
-      {preview && <img src={preview} alt="preview" style={{ marginTop: 10, maxWidth: 200 }} />}
+      {preview && (
+        <img
+          src={preview}
+          alt="preview"
+          style={{ marginTop: 10, maxWidth: 200 }}
+        />
+      )}
     </div>
   );
 }
