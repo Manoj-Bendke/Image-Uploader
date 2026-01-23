@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from 'axios'
 
 export default function ImageUpload() {
   const [file, setFile] = useState(null);
@@ -21,13 +22,8 @@ export default function ImageUpload() {
     const formData = new FormData();
     formData.append("image", file);
 
-    const res = await fetch("/upload", {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await res.json();
-    alert(data.message);
+    const res = await axios.post("http://localhost:3000/upload",formData)
+    alert(res.data.message)
   };
 
   return (
@@ -43,7 +39,7 @@ export default function ImageUpload() {
         <img
           src={preview}
           alt="preview"
-          style={{ marginTop: 10, maxWidth: 200 }}
+          style={{ marginTop: 10, maxWidth: 400 }}
         />
       )}
     </div>

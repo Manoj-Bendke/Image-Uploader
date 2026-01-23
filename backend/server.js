@@ -1,21 +1,24 @@
 import express from "express";
 import multer from "multer";
 import path from "path";
+import cors from "cors";
 import { fileURLToPath } from "url";
 
 const app = express();
 const PORT = 3000;
 
-// needed because ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// serve frontend
+app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.static("public"));
 
-// multer config
+app.get("/ping", (req, res) => {
+  res.json({ message: "pong" });
+});
+
 const storage = multer.diskStorage({
-  destination: "/backend/uploads",
+  destination: path.join(__dirname, "uploads"),
   filename: (req, file, cb) => {
     cb(null, Date.now() + "-" + file.originalname);
   }
@@ -23,21 +26,25 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 2 * 1024 * 1024 }, // 2MB
+  limits: { fileSize: 2 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     if (!file.mimetype.startsWith("image/")) {
-      cb(new Error("Only images allowed"));
+      return cb(new Error("Only images allowed"), false);
     }
-    rcb(null, true);
+    cb(null, true);
   }
 });
 
-// route
 app.post("/upload", upload.single("image"), (req, res) => {
   res.json({
     message: "Image uploaded successfully",
     file: req.file.filename
-  });
+  });x
+});
+
+app.use((err, req, res, next) => {
+  console.error("SERVER ERROR:", err.message);
+  res.status(400).json({ error: err.message });
 });
 
 app.listen(PORT, () => {
